@@ -24,9 +24,8 @@ public class Score {
 		super();
 	}
 	
-	public Score(Integer id, Integer win, Integer lose, Integer draw){
+	public Score(Integer win, Integer lose, Integer draw){
 		super();
-		this.id=id;
 		this.win=win;
 		this.lose=lose;
 		this.draw=draw;
