@@ -28,7 +28,7 @@ public class Init extends HttpServlet {
 			getServletContext().setAttribute(Costants.KEY_SERVICE, service);
 			
 			service.registerUser("admin", "admin", "admin@admin.com");
-			service.loginCheck("admin", "ciao");
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			manager.close(); 

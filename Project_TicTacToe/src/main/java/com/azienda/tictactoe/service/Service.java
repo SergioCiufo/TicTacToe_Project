@@ -62,6 +62,7 @@ public class Service {
 			if(user==null) {
 				throw new InvalidCredentialsException("Invalid credentials", null);
 			}
+			System.out.println("Credenziali Valide");
 			manager.getTransaction().commit();
 			return user;
 		} catch (Exception e) {
