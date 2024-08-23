@@ -27,7 +27,7 @@ public class Init extends HttpServlet {
 			Service service = new Service(manager, userDao, scoreDao);
 			getServletContext().setAttribute(Costants.KEY_SERVICE, service);
 			
-			service.registerUser("admin", "admin", "admin@admin.com");
+			//service.registerUser("admin", "admin", "admin@admin.com");
 
 		} catch (Exception e) {
 			e.printStackTrace();

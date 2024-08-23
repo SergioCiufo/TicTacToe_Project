@@ -56,6 +56,6 @@ public class PointUpdateServlet extends HttpServlet {
             e.printStackTrace();
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             resp.getWriter().write("Server error: " + e.getMessage());
-        }
+        } 
     }
 }

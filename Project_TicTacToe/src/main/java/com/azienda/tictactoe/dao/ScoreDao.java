@@ -28,7 +28,7 @@ public class ScoreDao implements DaoInterface<Score> {
 	@Override
 	public List<Score> retrieve() {
 		return manager.createQuery("select x from Score x", Score.class).getResultList();
-	}
+	} 
 
 	@Override
 	public Score update(Score ref) {

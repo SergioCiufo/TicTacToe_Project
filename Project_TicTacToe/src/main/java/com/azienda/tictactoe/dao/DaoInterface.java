@@ -8,3 +8,4 @@ public interface DaoInterface<T> {
 	public T update(T ref);
 	public void delete(T ref);
 }
+ 

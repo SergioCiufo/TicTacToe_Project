@@ -43,6 +43,6 @@ public class RegisterServlet extends HttpServlet {
 			e.printStackTrace();
 			// da rivedere
 			req.getRequestDispatcher(req.getContextPath()+"/jsp/Error.jsp");
-		}
+		} 
 	}
 }

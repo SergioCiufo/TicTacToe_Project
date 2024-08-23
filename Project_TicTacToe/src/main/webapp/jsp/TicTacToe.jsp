@@ -1,3 +1,4 @@
+<%@page import="com.azienda.tictactoe.model.Score"%>
 <%@page import="com.azienda.tictactoe.model.User"%>
 <%@page import="com.azienda.tictactoe.utils.Costants"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
@@ -41,6 +42,10 @@
 
 <% 
 	User user=(User)request.getSession().getAttribute(Costants.KEY_SESSION_USER);
+
+	String errorLogin=(String)request.getAttribute(Costants.ERROR_LOGIN);
+	
+	String errorRegister=(String)request.getAttribute(Costants.ERROR_REGISTER);
 %>
 
 <body class="container">
@@ -78,11 +83,11 @@
             </div>
 
         </sidebar>
-        <!--Div Login HIDE-->
-        <div class="row justify-content-center text-center" id="divLogin">
+        <!--Div Login HIDE se credenziali non valide -->
+        <div class="row justify-content-center text-center" id="divLogin"  <% if (errorLogin != null) { %> style="display: flex;" <% } %> >
             <form action="<%=request.getContextPath() + "/login"%>" method="post" class="col-12 mt-5">
                 <div class="row justify-content-center mb-3">
-                    <div class="col-6">
+                    <div class="col-6">                   	
                         <h3>Username</h3>
                         <input type="text" name="loginUsername" class="form-control" placeholder="Enter username" required>
                     </div>
@@ -97,13 +102,17 @@
                 </div>
 
                 <div class="row justify-content-center mb-3">
-                    <div class="col-6">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                    </div>
+	                <% if (errorLogin!=null) { %>
+	                <p class="pError"><b><%=errorLogin%></b></p>
+	                <% } %>
+	                    <div class="col-6">
+	                    	
+	                        <button type="submit" class="btn btn-primary">Login</button>
+	                    </div>
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-12">
-                        <button id="btnRegister" class="btn btn-success">Register</button>
+                        <button id="btnRegister" class="btn btn-success">Sign Up</button>
                     </div>
                 </div>
 
@@ -111,12 +120,12 @@
         </div>
         <!---->
         <!--Div Register HIDE-->
-        <div class="row justify-content-center text-center" id="divRegister">
-            <form class="col-12 mt-5">
+        <div class="row justify-content-center text-center" id="divRegister" <% if (errorRegister != null) { %> style="display: flex;" <% } %>>
+            <form action="<%=request.getContextPath() + "/register"%>" method="post" class="col-12 mt-5">
                 <div class="row justify-content-center mb-3">
                     <div class="col-6">
                         <h3>Username</h3>
-                        <input type="text" name="RegisterUsername" class="form-control" placeholder="Enter username"
+                        <input type="text" name="registerUsername" class="form-control" placeholder="Enter username"
                             required>
                     </div>
                 </div>
@@ -124,7 +133,7 @@
                 <div class="row justify-content-center mb-3">
                     <div class="col-6">
                         <h3>Password</h3>
-                        <input type="password" name="RegisterPassword" class="form-control" placeholder="Enter password"
+                        <input type="password" name="registerPassword" class="form-control" placeholder="Enter password"
                             required>
                     </div>
                 </div>
@@ -132,12 +141,15 @@
                 <div class="row justify-content-center mb-3">
                     <div class="col-6">
                         <h3>Email</h3>
-                        <input type="email" name="RegisterEmail" class="form-control" placeholder="Enter email"
+                        <input type="email" name="registerEmail" class="form-control" placeholder="Enter email"
                             required>
                     </div>
                 </div>
 
                 <div class="row justify-content-center mb-3">
+                <% if (errorRegister!=null) { %>
+                <p class="pError"><b><%=errorRegister%></b></p>
+                <% } %>
                     <div class="col-3">
                         <button type="submit" class="btn btn-primary">Register</button>
                     </div>
@@ -203,23 +215,42 @@
             </div>
             <div class="row">
                 <% 
-					if (user != null) {
-					%>
-					    <h4><%= user.getUsername() %>
-					<% 
-					} else {
-					%>
-					    <h4>Player
+					if (user != null && user.getScore() != null) {
+				%>
+					    <h4><%= user.getUsername() %>:
+					    <span class="score" id="playerScore"><%= user.getScore().getWin() %> 
+					    </span></h4>
+				<% } else { %>	   
+					    <h4>Player:
+					    <span class="score" id="playerScore">0</span></h4>
 					<% 
 					}
+					%>
+            </div>
+            
+            <div class="row">
+                <h4>Bot:
+                <% 
+					if (user != null && user.getScore() != null) {
 				%>
-                <span class="score" id="playerScore">0</span></h4>
+                <span class="score" id="botScore"><%= user.getScore().getLose() %>
+                </span></h4> 
+                <% } else { %>
+                <span class="score" id="botScore">0</span></h4>
+                <% } %>
             </div>
             <div class="row">
-                <h4>Bot: <span class="score" id="botScore">0</span></h4>
-            </div>
-            <div class="row">
-                <h4>Draw: <span class="score" id="drawScore">0</span></h4>
+            	
+                <h4>Draw:
+                <% 
+					if (user != null && user.getScore() != null) {
+				%>
+                <span class="score" id="drawScore"><%= user.getScore().getDraw() %>
+                </span></h4> 
+                <% } else { %>
+                <span class="score" id="drawScore">0</span></h4>
+                <% } %>
+                
             </div>
         </div>
     </main>
