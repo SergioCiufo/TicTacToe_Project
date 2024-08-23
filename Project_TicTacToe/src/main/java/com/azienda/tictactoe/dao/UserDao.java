@@ -5,7 +5,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
-import com.azienda.tictactoe.model.Score;
 import com.azienda.tictactoe.model.User;
 
 public class UserDao implements DaoInterface<User> {
@@ -57,13 +56,5 @@ public class UserDao implements DaoInterface<User> {
 			return null;
 		}
 	}
-	//con fetch
-	public User findScore(Integer UserId) {
-		try {
-			return manager.createQuery("select x from User x left join fetch x.score s where x.id=:parUserId", User.class).setParameter("parUserId", UserId).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}		
-	}
-
+	
 }

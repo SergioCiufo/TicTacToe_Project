@@ -3,7 +3,6 @@ package com.azienda.tictactoe.ui;
 import java.io.IOException;
 
 import com.azienda.tictactoe.exception.InvalidCredentialsException;
-import com.azienda.tictactoe.model.Score;
 import com.azienda.tictactoe.model.User;
 import com.azienda.tictactoe.service.Service;
 import com.azienda.tictactoe.utils.Costants;
@@ -27,16 +26,14 @@ public class LoginServlet extends HttpServlet {
 			String username=req.getParameter(Costants.FORM_LOGIN_USERNAME);
 			String password=req.getParameter(Costants.FORM_LOGIN_PASSWORD);
 			User user=service.loginCheck(username, password);
-			
 			req.getSession().setAttribute(Costants.KEY_SESSION_USER, user);
-
 			//ti rimanda alla pagina
 			resp.sendRedirect(req.getContextPath()+"/jsp/TicTacToe.jsp");
 		} catch (InvalidCredentialsException e) {
 			e.printStackTrace();
 			req.setAttribute(Costants.ERROR_LOGIN, e.getMessage());
 			//ti rimanda alla pagina da rivedere //messaggio rt
-			req.getRequestDispatcher("/jsp/TicTacToe.jsp").forward(req, resp);
+			req.getRequestDispatcher(req.getContextPath()+"/jsp/Error.jsp");
 		} catch (Exception e) {
 			e.printStackTrace();
 			// da rivedere

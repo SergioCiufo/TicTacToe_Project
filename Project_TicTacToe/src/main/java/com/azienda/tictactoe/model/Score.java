@@ -24,12 +24,11 @@ public class Score {
 		super();
 	}
 	
-	public Score(User user, Integer win, Integer lose, Integer draw){
+	public Score(Integer win, Integer lose, Integer draw){
 		super();
 		this.win=win;
 		this.lose=lose;
 		this.draw=draw;
-		this.user=user;
 	}
 
 	public Integer getId() {

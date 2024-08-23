@@ -3,7 +3,6 @@ package com.azienda.tictactoe.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 
 import com.azienda.tictactoe.model.Score;
 import com.azienda.tictactoe.model.User;
@@ -41,5 +40,7 @@ public class ScoreDao implements DaoInterface<Score> {
 	public void delete(Score ref) {
 		manager.remove(ref);	
 	}
+	
+	
 
 }

@@ -303,7 +303,7 @@ footer {
     background-color: rgb(211, 211, 211);
     position: fixed;
     z-index: 1;
-    height: 45%;
+    height: 40%;
     width: 20%;
     border-radius: 5%;
 }
@@ -313,12 +313,8 @@ footer {
     background-color: rgb(211, 211, 211);
     position: fixed;
     z-index: 2;
-    height: 55%;
+    height: 50%;
     width: 20%;
     border-radius: 5%;
 
-}
-
-.pError{
-	color: red;	
 }
