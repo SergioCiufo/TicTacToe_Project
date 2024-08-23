@@ -21,7 +21,7 @@ public class LogoutServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			req.getSession().removeAttribute(Costants.KEY_SESSION_USER);
-			System.out.println("Logout Effettuato");
+			System.out.println("Logged Out Successfully");
 			//req.getRequestDispatcher("/jsp/TicTacToe.jsp").forward(req, resp);
 			resp.sendRedirect(req.getContextPath() + "/jsp/TicTacToe.jsp");
 		} catch (Exception e) {

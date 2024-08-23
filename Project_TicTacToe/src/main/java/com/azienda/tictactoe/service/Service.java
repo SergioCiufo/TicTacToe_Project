@@ -40,7 +40,7 @@ public class Service {
 				user= new User(username, email, password);
 				userDao.create(user);
 				//manager.persist(user); //già esistente nel create del dao
-				System.out.println("Utente creato con successo");
+				System.out.println("User successfully created");
 				Score scoreUtente= new Score(user, 0, 0, 0);
 				if (user.getUsername().equals("admin")) {
 					scoreUtente= new Score(user,50,0,0);
@@ -75,7 +75,7 @@ public class Service {
 			if(user==null) {
 				throw new InvalidCredentialsException("Invalid credentials", null);
 			}
-			System.out.println("Credenziali Valide");
+			System.out.println("Valid Credentials");
 
 			user=userDao.findScore(user.getId());
 			System.out.println(user);
