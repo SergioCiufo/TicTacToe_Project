@@ -66,7 +66,8 @@ public class Service {
 		try {
 			List<User> userList = userDao.retrieve();
 			for(User u:userList) {
-				if(u.getUsername().equals(username) && u.getPassword().equals(password)) {
+				//fix si può loggare case insensitive per l'username
+				if(u.getUsername().equalsIgnoreCase(username) && u.getPassword().equals(password)) {
 					user=u;
 					break;
 				} 
