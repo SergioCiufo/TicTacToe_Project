@@ -6,6 +6,7 @@ import javax.persistence.Persistence;
 
 import com.azienda.tictactoe.dao.ScoreDao;
 import com.azienda.tictactoe.dao.UserDao;
+import com.azienda.tictactoe.model.User;
 import com.azienda.tictactoe.service.Service;
 import com.azienda.tictactoe.utils.Costants;
 
@@ -26,8 +27,7 @@ public class Init extends HttpServlet {
 			ScoreDao scoreDao= new ScoreDao(manager);
 			Service service = new Service(manager, userDao, scoreDao);
 			getServletContext().setAttribute(Costants.KEY_SERVICE, service);
-			
-			service.registerUser("admin", "admin", "admin@admin.com");
+			//service.registerUser("admin", "admin", "admin@admin.com");
 
 		} catch (Exception e) {
 			e.printStackTrace();

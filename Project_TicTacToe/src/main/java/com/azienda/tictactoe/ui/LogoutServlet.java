@@ -22,7 +22,8 @@ public class LogoutServlet extends HttpServlet {
 		try {
 			req.getSession().removeAttribute(Costants.KEY_SESSION_USER);
 			System.out.println("Logout Effettuato");
-			req.getRequestDispatcher("/jsp/TicTacToe.jsp").forward(req, resp);
+			//req.getRequestDispatcher("/jsp/TicTacToe.jsp").forward(req, resp);
+			resp.sendRedirect(req.getContextPath() + "/jsp/TicTacToe.jsp");
 		} catch (Exception e) {
 			e.printStackTrace();
 			req.getRequestDispatcher("/jsp/Error.jsp").forward(req, resp);

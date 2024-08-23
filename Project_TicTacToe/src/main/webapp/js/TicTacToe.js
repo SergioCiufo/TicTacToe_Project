@@ -4,12 +4,14 @@ $(document).ready(function () {
     var gameActive = true;
     var gametable = ["", "", "", "", "", "", "", "", ""];
 
-    var playerScore = 0;
-    var botScore = 0;
-    var drawScore = 0;
     const playerScoreEl = document.getElementById("playerScore");
     const botScoreEl = document.getElementById("botScore");
     const drawScoreEl = document.getElementById("drawScore");
+
+var playerScore = parseInt(playerScoreEl.innerText) || 0;
+var botScore = parseInt(botScoreEl.innerText) || 0;
+var drawScore = parseInt(drawScoreEl.innerText) || 0;
+
 
     var tapSound = document.getElementById("tapSound");
     var winSound = document.getElementById("winSound");
@@ -59,26 +61,34 @@ $(document).ready(function () {
                 // Controllo vittoria
                 if (checkWin(player)) {
                     winSound.play();
-                    showStatusMessage("win"); // Mostra messaggio di vittoria
+                    showStatusMessage("win"); // Mostra messaggio di vittoria            
                     playerScore++;
                     playerScoreEl.innerText = playerScore;
+                    console.log("Player Point: "+playerScoreEl.innerText);
+                    
+    				updateScore(playerScore, drawScore, botScore);
+    				
                     gameActive = false;
                 } else if (gametable.indexOf("") === -1) {
                     drawSound.play();
                     showStatusMessage("draw"); // Mostra messaggio di pareggio
                     drawScore++;
                     drawScoreEl.innerText = drawScore;
+                    console.log("Draw Point: "+drawScoreEl.innerText);
+                    
+                    updateScore(playerScore, drawScore, botScore);
+                    
                     gameActive = false;
                 } else {
                     // Cambio turno e attiva mossa del bot
                     player = bot;
-                    botMove2();
+                    botMove();
                 }
             }
         }
     });
 
-    function botMove2() {
+    function botMove() {
         // Aggiungi un ritardo di 1/2 secondo prima di eseguire la mossa del bot
         setTimeout(function () {
             // Variabile per tenere traccia se è stata fatta una mossa
@@ -137,19 +147,27 @@ $(document).ready(function () {
                 gametable[bestMove] = bot;
                 tapSound.play(); // Suono della mossa del bot
                 $('#win' + bestMove).find('.tap').replaceWith('<img class="tapped" src="../media/' + bot + '.png">');
-
+	
                 // Controllo vittoria del bot
                 if (checkWin(bot)) {
                     loseSound.play(); // Suono della vittoria del bot
                     showStatusMessage("defeat"); // Mostra messaggio di sconfitta
                     botScore++;
                     botScoreEl.innerText = botScore;
+                    console.log("Bot Point: "+botScoreEl.innerText);
+                    
+                    updateScore(playerScore, drawScore, botScore);
+                    
                     gameActive = false;
                 } else if (gametable.indexOf("") === -1) {
                     drawSound.play(); // Suono del pareggio
                     showStatusMessage("draw"); // Mostra messaggio di pareggio
                     drawScore++;
                     drawScoreEl.innerText = drawScore;
+                    console.log("Draw Point: "+drawScoreEl.innerText);
+                    
+                    updateScore(playerScore, drawScore, botScore);
+                    
                     gameActive = false;
                 } else {
                     // Riabilita i click dopo che il bot ha fatto la sua mossa
@@ -191,27 +209,29 @@ $(document).ready(function () {
             $('.cell').removeClass('fade-out').find('.tap').prop('disabled', false);
         }, 500); // Assicurati che il timeout corrisponda alla durata dell'animazione
     });
-
+   
     function showStatusMessage(result) {
-        const statusImage = document.getElementById("statusImage");
+    const statusImage = document.getElementById("statusImage");
 
-        // Imposta l'immagine e mostra il messaggio di stato
-        if (result === "win") {
-            statusImage.src = "../media/win.png";
-        } else if (result === "defeat") {
-            statusImage.src = "../media/defeat.png";
-        } else if (result === "draw") {
-            statusImage.src = "../media/draw.png";
-        }
+    if (result === "win") {
+        statusImage.src = "../media/win.png";
 
-        $("#statusMessage").removeClass('hidden'); // Mostra il messaggio di stato
-        gameActive = false; // Disabilita ulteriori mosse
+    } else if (result === "defeat") {
+        statusImage.src = "../media/defeat.png";
+
+    } else if (result === "draw") {
+        statusImage.src = "../media/draw.png";
+
     }
 
+    $("#statusMessage").removeClass('hidden');
+    gameActive = false;
+    
     $(document).on("click", "#statusMessage", function () {
         $(this).addClass('hidden'); // Nascondi il messaggio di stato quando viene cliccato
         $('.tap').prop('disabled', false); // Riabilita i bottoni per la nuova partita
     });
+}
 
 // Bottone Login
 var btnLogin = document.getElementById("btnLogin");
@@ -225,7 +245,7 @@ var btnRegisterBack = document.getElementById("btnRegisterBack");
 btnLogin.addEventListener("click", function (event) {
     event.stopPropagation(); // Evita che il click si propaghi al document
     divLogin.style.display = "flex"; // Mostra il form di login come flexbox per centrarlo
-    gameActive = false;
+    //gameActive = false; bug continuava a tappare le caselle a partita finita se non loggato
 });
 
 // Nascondi divLogin se viene cliccato fuori da esso
@@ -233,7 +253,7 @@ document.addEventListener("click", function (event) {
     // Se il click non avviene all'interno di divLogin o del bottone btnLogin
     if (!divLogin.contains(event.target) && !btnLogin.contains(event.target) && !divRegister.contains(event.target)) {
         divLogin.style.display = "none";
-        gameActive = true;
+        //gameActive = true; bug continuava a tappare le caselle a partita finita se non loggato
     }
 });
 
@@ -247,7 +267,7 @@ btnRegister.addEventListener("click", function(event){
     event.stopPropagation();  // Evita che il click si propaghi al document
     divRegister.style.display="flex"; // Mostra il form di login come flexbox per centrarlo
     divLogin.style.display="none"; //nasconde il divLogin
-    gameActive=false;
+    //gameActive=false; bug continuava a tappare le caselle a partita finita se non loggato
 })
 
 // Nascondi divRegistrati se viene cliccato fuori da esso
@@ -255,7 +275,7 @@ document.addEventListener("click", function (event) {
     // Se il click non avviene all'interno di divRegistrati o del bottone btnRegistrati
     if (!divRegister.contains(event.target) && !btnRegister.contains(event.target)) {
         divRegister.style.display = "none";
-        gameActive = true;
+        //gameActive = true; bug continuava a tappare le caselle a partita finita se non loggato
     }
 });
 
@@ -264,6 +284,34 @@ btnRegisterBack.addEventListener("click", function(){
     divRegister.style.display="none";
     divLogin.style.display="flex";
 })
+
+
+
+function updateScore(userWin, userLose, userDraw) {
+    console.log("Sending score update request...");
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "/Project_TicTacToe/pointUpdate", true); // URL corretto con contesto
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    
+    var params = "userWin=" + encodeURIComponent(userWin) 
+    			+ "&userLose="+encodeURIComponent(userLose) + "&userDraw="+encodeURIComponent(userDraw);
+    console.log("Request params: " + params);
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            console.log("Dati inviati con successo: " + xhr.responseText);
+        } else {
+            console.log("Errore durante l'invio dei dati: " + xhr.responseText);
+        }
+    };
+
+    xhr.onerror = function() {
+        console.error("Errore nella richiesta AJAX.");
+    };
+
+    xhr.send(params);
+}
 
 });
 
