@@ -1,0 +1,76 @@
+@charset "ISO-8859-1";
+html{
+	height:100%;
+}
+
+.container{
+	height: 100%;
+}
+
+body {
+
+    background-image: url(../media/background.svg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+header {
+    height: 15%;
+    overflow: hidden;
+    /* Hide any part of the image that overflows */
+    box-sizing: border-box;
+    margin-bottom: 2%;
+    display: flex;
+    justify-content: center;
+}
+
+#title {
+    width: auto;
+  	/* Scale the image to fit the container's width */
+    height: auto;
+    /* Maintain the image's aspect ratio */
+    object-fit: contain;
+    /* Keep the image within the container without distorting it */
+    box-sizing: border-box;
+    display: inline-block;
+}
+
+main {
+    margin-bottom: 2%;
+    height: 74%;
+}
+
+#windowsError{
+	height: 30%;
+	width: 40%;
+	background-color: #f8f6e7;
+	border: 2px solid #2c78d8;
+	border-radius: 2% 2% 0 0;
+}
+
+#windowsBlue{
+	background-color: #2c78d8;
+	color: white;
+	/* border-radius: 10% 10% 0 0; */
+}
+
+#windowsGrey{
+	height: 65%;
+	display: flex;
+	align-items: center;
+}
+
+#imgError {
+    width: 80%;
+    max-width: 100%;
+
+}
+#windowsBtn{
+	display: flex;
+	justify-content: center;
+}
+
+#errorBtn{
+	width:100%;
+}
