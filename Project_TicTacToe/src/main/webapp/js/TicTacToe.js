@@ -1,27 +1,76 @@
 $(document).ready(function () {
+    // State variables
     var player = "X";
     var bot = "O";
     var gameActive = true;
     var gametable = ["", "", "", "", "", "", "", "", ""];
+    var playerScore = 0;
+    var botScore = 0;
+    var drawScore = 0;
 
+    // DOM elements
     const playerScoreEl = document.getElementById("playerScore");
     const botScoreEl = document.getElementById("botScore");
     const drawScoreEl = document.getElementById("drawScore");
+    const tapSound = document.getElementById("tapSound");
+    const winSound = document.getElementById("winSound");
+    const loseSound = document.getElementById("loseSound");
+    const drawSound = document.getElementById("drawSound");
+    const statusImage = document.getElementById("statusImage");
+    const statusMessage = $("#statusMessage");
+    const divLogin = document.getElementById("divLogin");
+    const divRegister = document.getElementById("divRegister");
+    const btnLogin = document.getElementById("btnLogin");
+    const btnRegister = document.getElementById("btnRegister");
+    const btnRegisterBack = document.getElementById("btnRegisterBack");
 
-var playerScore = parseInt(playerScoreEl.innerText) || 0;
-var botScore = parseInt(botScoreEl.innerText) || 0;
-var drawScore = parseInt(drawScoreEl.innerText) || 0;
-
-
-    var tapSound = document.getElementById("tapSound");
-    var winSound = document.getElementById("winSound");
-    var loseSound = document.getElementById("loseSound");
-    var drawSound = document.getElementById("drawSound");
+    // Set the volume of the sounds
     tapSound.volume = 0.5;
     winSound.volume = 0.5;
     loseSound.volume = 0.5;
     drawSound.volume = 0.5;
+    
+    // Handle login and registration buttons
+    btnLogin.addEventListener("click", function (event) {
+        event.stopPropagation();
+        divLogin.style.display = "flex";
+    });
 
+    btnRegister.addEventListener("click", function (event) {
+        event.stopPropagation();
+        divRegister.style.display = "flex";
+        divLogin.style.display = "none";
+    });
+
+    btnRegisterBack.addEventListener("click", function () {
+        divRegister.style.display = "none";
+        divLogin.style.display = "flex";
+    });
+
+    // Hide login and registration divs when clicking outside
+    document.addEventListener("click", function (event) {
+        if (!divLogin.contains(event.target) && !btnLogin.contains(event.target) && !divRegister.contains(event.target) && !btnRegister.contains(event.target)) {
+            divLogin.style.display = "none";
+            divRegister.style.display = "none";
+        }
+    });
+
+    divLogin.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    divRegister.addEventListener("click", function (event) {
+        event.stopPropagation();
+    });
+
+    // Handle clicks on tic-tac-toe cells
+    $(document).on("click", ".tap", function () {
+        if (gameActive) {
+            handleCellClick($(this));
+        }
+    });
+    
+    // Winning combinations
     const winCombination = [
         [0, 1, 2],
         [3, 4, 5],
@@ -33,284 +82,266 @@ var drawScore = parseInt(drawScoreEl.innerText) || 0;
         [2, 4, 6]
     ];
 
-    //se utente scelto 0 e 1, bot sceglie 2
-    //se utente scelto 0 e 2, bot sceglie 1
-    //se utente scelto 1 e 2, bot sceglie 0
-    //if(player [0,1]){
-    // bot = 2;
-    //}
+    function handleCellClick($cell) {
+        $('.tap').prop('disabled', true);
+        var cellIndex = $cell.parent().attr('id').replace('win', '');
 
+        if (gametable[cellIndex] === "") {
+            gametable[cellIndex] = player;
+            tapSound.play();
+            $cell.replaceWith('<img class="tapped" src="../media/' + player + '.png">');
 
-    // Gestione click su una cella
-    $(document).on("click", ".tap", function () {
-        if (gameActive) {
-            // Disabilita temporaneamente i click
-            $('.tap').prop('disabled', true);
-
-            //cellIndex è una variabile che rappresenta l'indice della cella della griglia su cui il giocatore (o il bot) sta cercando di fare una mossa. 
-            //Questo indice è utilizzato per aggiornare lo stato della griglia e per controllare la vittoria.
-            var cellIndex = $(this).parent().attr('id').replace('win', '');
-
-            // Verifica che la cella non sia già occupata
-            if (gametable[cellIndex] === "") {
-                // Aggiorna la griglia con il segno del giocatore corrente
-                gametable[cellIndex] = player;
-                tapSound.play();
-                $(this).replaceWith('<img class="tapped" src="../media/' + player + '.png">');
-
-                // Controllo vittoria
-                if (checkWin(player)) {
-                    winSound.play();
-                    showStatusMessage("win"); // Mostra messaggio di vittoria            
-                    playerScore++;
-                    playerScoreEl.innerText = playerScore;
-                    console.log("Player Point: "+playerScoreEl.innerText);
-                    
-    				updateScore(playerScore, drawScore, botScore);
-    				
-                    gameActive = false;
-                } else if (gametable.indexOf("") === -1) {
-                    drawSound.play();
-                    showStatusMessage("draw"); // Mostra messaggio di pareggio
-                    drawScore++;
-                    drawScoreEl.innerText = drawScore;
-                    console.log("Draw Point: "+drawScoreEl.innerText);
-                    
-                    updateScore(playerScore, drawScore, botScore);
-                    
-                    gameActive = false;
-                } else {
-                    // Cambio turno e attiva mossa del bot
-                    player = bot;
-                    botMove();
-                }
+            if (checkWin(player)) {
+                handleWin("player");
+            } else if (gametable.indexOf("") === -1) {
+                handleDraw();
+            } else {
+                player = bot;
+                botMove();
             }
         }
-    });
+    }
 
+    // Bot's move
     function botMove() {
-        // Aggiungi un ritardo di 1/2 secondo prima di eseguire la mossa del bot
         setTimeout(function () {
-            // Variabile per tenere traccia se è stata fatta una mossa
-            var moveMade = false;
-
-            // Funzione per trovare la migliore mossa per un giocatore specifico
-            function findBestMove(player) {
-                // Trova le combinazioni di vittoria che contengono almeno due dei segni del giocatore
-                let winningMove = -1;
-
-                // Filtra le combinazioni vincenti che contengono almeno una delle mosse del giocatore
-                for (let combo of winCombination) {
-                    let count = 0;
-                    let emptyIndex = -1;
-
-                    combo.forEach(index => {
-                        if (gametable[index] === player) {
-                            count++;
-                        } else if (gametable[index] === "") {
-                            emptyIndex = index;
-                        }
-                    });
-
-                    // Se ci sono due segni dello stesso giocatore e una cella vuota, questa è una mossa vincente
-                    if (count === 2 && emptyIndex !== -1) {
-                        winningMove = emptyIndex;
-                        break; // Trova subito la mossa vincente
-                    }
-                }
-
-                return winningMove;
-            }
-
-            // Prima, prova a trovare una mossa vincente per il bot
+            // Find the best move for the bot
             var bestMove = findBestMove(bot);
+
+            // If no winning move exists for the bot, try to block the player
             if (bestMove === -1) {
-                // Poi, prova a bloccare la vittoria del giocatore avversario
                 bestMove = findBestMove(player === "X" ? "O" : "X");
             }
 
-            // Se non ci sono mosse vincenti o bloccanti, scegli una mossa casuale
+            // If no winning or blocking moves, choose a random move
             if (bestMove === -1) {
-                var emptyCells = [];
-                for (var i = 0; i < gametable.length; i++) {
-                    if (gametable[i] === "") {
-                        emptyCells.push(i);
-                    }
-                }
-                if (emptyCells.length > 0) {
-                    bestMove = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-                }
+                var emptyCells = gametable.map((value, index) => value === "" ? index : null).filter(v => v !== null);
+                bestMove = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             }
 
-            // Se è stata trovata una mossa valida, eseguila
+            // If a valid move was found, execute it
             if (bestMove !== -1) {
-                gametable[bestMove] = bot;
-                tapSound.play(); // Suono della mossa del bot
-                $('#win' + bestMove).find('.tap').replaceWith('<img class="tapped" src="../media/' + bot + '.png">');
-	
-                // Controllo vittoria del bot
-                if (checkWin(bot)) {
-                    loseSound.play(); // Suono della vittoria del bot
-                    showStatusMessage("defeat"); // Mostra messaggio di sconfitta
-                    botScore++;
-                    botScoreEl.innerText = botScore;
-                    console.log("Bot Point: "+botScoreEl.innerText);
-                    
-                    updateScore(playerScore, drawScore, botScore);
-                    
-                    gameActive = false;
-                } else if (gametable.indexOf("") === -1) {
-                    drawSound.play(); // Suono del pareggio
-                    showStatusMessage("draw"); // Mostra messaggio di pareggio
-                    drawScore++;
-                    drawScoreEl.innerText = drawScore;
-                    console.log("Draw Point: "+drawScoreEl.innerText);
-                    
-                    updateScore(playerScore, drawScore, botScore);
-                    
-                    gameActive = false;
-                } else {
-                    // Riabilita i click dopo che il bot ha fatto la sua mossa
-                    $('.tap').prop('disabled', false);
-                    // Cambio turno di nuovo al giocatore
-                    player = "X";
-                }
+                executeBotMove(bestMove);
             }
-        }, 500); // Ritardo di 500 millisecondi (1/2 secondo)
+        }, 500); // 500 milliseconds delay (1/2 second)
+    }
+
+    function executeBotMove(bestMove) {
+        // Update the game grid with the bot's move
+        gametable[bestMove] = bot;
+        
+        // Play the move sound
+        tapSound.play();
+        
+        // Find the cell element corresponding to the bot's move and replace it with a bot image
+        $('#win' + bestMove).find('.tap').replaceWith('<img class="tapped" src="../media/' + bot + '.png">');
+
+        // Check if the bot won with this move
+        if (checkWin(bot)) {
+            handleWin("bot"); // Handle bot's victory
+        } else if (gametable.indexOf("") === -1) {
+            // If all cells are occupied and no one has won, it's a draw
+            handleDraw(); // Handle draw
+        } else {
+            // Re-enable cell clicks and change turn
+            $('.tap').prop('disabled', false);
+            player = "X"; // Set player to human for the next turn
+        }
+    }
+
+    function findBestMove(player) {
+        // Variable to track the best move found
+        let winningMove = -1;
+
+        // Iterate through all winning combinations
+        for (let combo of winCombination) {
+            // Variable to count the number of player's marks in the combination
+            let count = 0;
+            // Variable to track the index of the empty cell in the combination
+            let emptyIndex = -1;
+
+            // Check each cell in the combination
+            combo.forEach(index => {
+                if (gametable[index] === player) {
+                    // Increment count if the cell contains the player's mark
+                    count++;
+                } else if (gametable[index] === "") {
+                    // Store the index of the empty cell
+                    emptyIndex = index;
+                }
+            });
+
+            // If there are two of the player's marks in the combination and one empty cell, it's a winning move
+            if (count === 2 && emptyIndex !== -1) {
+                // Store the index of the winning move
+                winningMove = emptyIndex;
+                break; // Exit loop, as the best move is found
+            }
+        }
+
+        // Return the index of the winning move found, or -1 if none
+        return winningMove;
     }
 
     function checkWin(currentPlayer) {
+        // Check if there is at least one winning combination that is completely occupied by the current player
         return winCombination.some(combination => {
-            return combination.every(index => {
-                return gametable[index] === currentPlayer;
-            });
+            // Check if all cells in the current combination contain the player's mark
+            return combination.every(index => gametable[index] === currentPlayer);
         });
     }
 
-    // Funzione per resettare il gioco
+    function handleWin(winner) {
+        // Check if the winner is the player
+        if (winner === "player") {
+            // Play the player's victory sound
+            winSound.play();
+            // Increment player's score
+            playerScore++;
+            // Update the HTML element showing the player's score
+            playerScoreEl.innerText = playerScore;
+            // Send score update to the server
+            updateScore(playerScore, drawScore, botScore);
+            // Show a victory message
+            showStatusMessage("win");
+        } 
+        // Check if the winner is the bot
+        else if (winner === "bot") {
+            // Play the loss sound for the player (bot's victory)
+            loseSound.play();
+            // Increment bot's score
+            botScore++;
+            // Update the HTML element showing the bot's score
+            botScoreEl.innerText = botScore;
+            // Send score update to the server
+            updateScore(playerScore, drawScore, botScore);
+            // Show a defeat message
+            showStatusMessage("defeat");
+        }
+        // Disable further actions in the game
+        gameActive = false;
+    }
+
+    function handleDraw() {
+        // Play the draw sound
+        drawSound.play();
+        
+        // Increment draw score
+        drawScore++;
+        
+        // Update the HTML element showing the draw score
+        drawScoreEl.innerText = drawScore;
+        
+        // Send score update to the server
+        updateScore(playerScore, drawScore, botScore);
+        
+        // Show a draw message
+        showStatusMessage("draw");
+        
+        // Disable further actions in the game
+        gameActive = false;
+    }
+
+    function showStatusMessage(result) {
+        // Set the status image based on the game result
+        statusImage.src = "../media/" + result + ".png";
+
+        // Show the status message by removing the 'hidden' class
+        statusMessage.removeClass('hidden');
+
+        // Disable further actions in the game
+        gameActive = false;
+
+        // Add event handler to hide the status message when clicked
+        $(document).on("click", "#statusMessage", function () {
+            // Add the 'hidden' class to the status message to hide it
+            statusMessage.addClass('hidden');
+
+            // Re-enable buttons to allow new game actions
+            $('.tap').prop('disabled', false);
+        });
+    }
+
+    // Handle click on the "newGame" button to start a new game
     $(document).on("click", "#newGame", function () {
+        // Play the tap sound when the button is clicked
         tapSound.play();
+
+        // Add the 'fade-out' class to all cells to start an exit animation
         $('.cell').addClass('fade-out');
 
-        // Dopo l'animazione, reset del gioco
-        setTimeout(function () {
-            gametable = ["", "", "", "", "", "", "", "", ""];
-            gameActive = true;
-            player = "X";
-
-            $('.cell').each(function () {
-                if ($(this).find('.tapped').length > 0) {
-                    $(this).find('.tapped').remove();
-                    $(this).append('<button class="tap"></button>');
-                }
-            });
-
-            // Rimuovi la classe di animazione
-            $('.cell').removeClass('fade-out').find('.tap').prop('disabled', false);
-        }, 500); // Assicurati che il timeout corrisponda alla durata dell'animazione
+        // Wait 500 milliseconds (duration of the animation) and then execute the resetGame function
+        setTimeout(resetGame, 500);
     });
-   
-    function showStatusMessage(result) {
-    const statusImage = document.getElementById("statusImage");
 
-    if (result === "win") {
-        statusImage.src = "../media/win.png";
+    // Function to reset the game state and prepare for a new game
+    function resetGame() {
+        // Reset the game grid content
+        gametable = ["", "", "", "", "", "", "", "", ""];
 
-    } else if (result === "defeat") {
-        statusImage.src = "../media/defeat.png";
+        // Set the game to active
+        gameActive = true;
 
-    } else if (result === "draw") {
-        statusImage.src = "../media/draw.png";
+        // Set the current player to "X" (presumably the human player)
+        player = "X";
 
+        // For each cell in the game grid
+        $('.cell').each(function () {
+            // If the cell contains an element with class 'tapped' (i.e., a move has been played)
+            if ($(this).find('.tapped').length > 0) {
+                // Remove the 'tapped' image from the cell
+                $(this).find('.tapped').remove();
+
+                // Add an empty 'tap' button to the cell
+                $(this).append('<button class="tap"></button>');
+            }
+        });
+
+        // Remove the 'fade-out' class from all cells (reset animation)
+        $('.cell').removeClass('fade-out');
+
+        // Re-enable cell buttons to allow interactions
+        $('.cell').find('.tap').prop('disabled', false);
     }
-
-    $("#statusMessage").removeClass('hidden');
-    gameActive = false;
     
-    $(document).on("click", "#statusMessage", function () {
-        $(this).addClass('hidden'); // Nascondi il messaggio di stato quando viene cliccato
-        $('.tap').prop('disabled', false); // Riabilita i bottoni per la nuova partita
-    });
-}
+    // Function to update scores on the server using an AJAX request
+    function updateScore(userWin, userDraw, userLose) {
+        // Debug log to indicate that the score update request is in progress
+        console.log("Sending score update request...");
 
-// Bottone Login
-var btnLogin = document.getElementById("btnLogin");
-var divLogin = document.getElementById("divLogin");
-//Bottone Register
-var btnRegister = document.getElementById("btnRegister");
-var divRegister = document.getElementById("divRegister");
-var btnRegisterBack = document.getElementById("btnRegisterBack");
+        // Create a new XMLHttpRequest instance
+        var xhr = new XMLHttpRequest();
 
-//Apre il Div Login
-btnLogin.addEventListener("click", function (event) {
-    event.stopPropagation(); // Evita che il click si propaghi al document
-    divLogin.style.display = "flex"; // Mostra il form di login come flexbox per centrarlo
-    //gameActive = false; bug continuava a tappare le caselle a partita finita se non loggato
-});
+        // Configure the AJAX request
+        xhr.open("POST", "/Project_TicTacToe/pointUpdate", true); // Specify HTTP method (POST) and target URL
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); // Set the request header to send URL encoded data
 
-// Nascondi divLogin se viene cliccato fuori da esso
-document.addEventListener("click", function (event) {
-    // Se il click non avviene all'interno di divLogin o del bottone btnLogin
-    if (!divLogin.contains(event.target) && !btnLogin.contains(event.target) && !divRegister.contains(event.target)) {
-        divLogin.style.display = "none";
-        //gameActive = true; bug continuava a tappare le caselle a partita finita se non loggato
+        // Prepare request parameters as URL encoded string
+        var params = "userWin=" + encodeURIComponent(userWin)  // Encode and add player win score
+            + "&userDraw=" + encodeURIComponent(userDraw)  // Encode and add draw score
+            + "&userLose=" + encodeURIComponent(userLose); // Encode and add player lose score
+
+        // Debug log to display request parameters
+        console.log("Request params: " + params);
+
+        // Define callback function to handle the response of the request
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // If request is successful (status 200), log success and server response
+                console.log("Data successfully sent: " + xhr.responseText);
+            } else {
+                // If request fails, log error message with server response
+                console.log("Error during data submission: " + xhr.responseText);
+            }
+        };
+
+        // Define callback function to handle errors in the request
+        xhr.onerror = function () {
+            // Log error if AJAX request fails
+            console.error("Error in the AJAX request");
+        };
+
+        // Send the request with encoded parameters
+        xhr.send(params);
     }
-});
-
-// Impedisci la propagazione dell'evento di click su divLogin
-divLogin.addEventListener("click", function (event) {
-    event.stopPropagation();
-});
-
-//Apre il Div Registrati
-btnRegister.addEventListener("click", function(event){
-    event.stopPropagation();  // Evita che il click si propaghi al document
-    divRegister.style.display="flex"; // Mostra il form di login come flexbox per centrarlo
-    divLogin.style.display="none"; //nasconde il divLogin
-    //gameActive=false; bug continuava a tappare le caselle a partita finita se non loggato
-})
-
-// Nascondi divRegistrati se viene cliccato fuori da esso
-document.addEventListener("click", function (event) {
-    // Se il click non avviene all'interno di divRegistrati o del bottone btnRegistrati
-    if (!divRegister.contains(event.target) && !btnRegister.contains(event.target)) {
-        divRegister.style.display = "none";
-        //gameActive = true; bug continuava a tappare le caselle a partita finita se non loggato
-    }
-});
-
-//chiude divRegistrati se viene cliccato back
-btnRegisterBack.addEventListener("click", function(){
-    divRegister.style.display="none";
-    divLogin.style.display="flex";
-})
-
-
-
-function updateScore(userWin, userLose, userDraw) {
-    console.log("Sending score update request...");
-    
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/Project_TicTacToe/pointUpdate", true); // URL corretto con contesto
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    
-    var params = "userWin=" + encodeURIComponent(userWin) 
-    			+ "&userLose="+encodeURIComponent(userLose) + "&userDraw="+encodeURIComponent(userDraw);
-    console.log("Request params: " + params);
-
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            console.log("Dati inviati con successo: " + xhr.responseText);
-        } else {
-            console.log("Errore durante l'invio dei dati: " + xhr.responseText);
-        }
-    };
-
-    xhr.onerror = function() {
-        console.error("Errore nella richiesta AJAX.");
-    };
-
-    xhr.send(params);
-}
-
 });

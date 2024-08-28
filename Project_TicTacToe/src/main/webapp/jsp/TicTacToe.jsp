@@ -83,7 +83,7 @@
             </div>
 
         </sidebar>
-        <!--Div Login HIDE se credenziali non valide -->
+        <!-- Hide Login Div if credentials are invalid -->
         <div class="row justify-content-center text-center" id="divLogin"  <% if (errorLogin != null) { %> style="display: flex;" <% } %> >
             <form action="<%=request.getContextPath() + "/login"%>" method="post" class="col-12 mt-5">
                 <div class="row justify-content-center mb-3">

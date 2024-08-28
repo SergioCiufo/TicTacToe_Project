@@ -18,7 +18,7 @@ body {
 header {
     height: 15%;
     overflow: hidden;
-    /* Nasconde qualsiasi parte dell'immagine che fuoriesce */
+    /* Hide any part of the image that overflows */
     box-sizing: border-box;
     margin-bottom: 2%;
     display: flex;
@@ -27,11 +27,11 @@ header {
 
 #title {
     width: auto;
-    /* Adatta l'immagine alla larghezza del contenitore */
+  	/* Scale the image to fit the container's width */
     height: auto;
-    /* Mantiene le proporzioni dell'immagine */
+    /* Maintain the image's aspect ratio */
     object-fit: contain;
-    /* Mantiene l'immagine all'interno del contenitore senza deformarla */
+    /* Keep the image within the container without distorting it */
     box-sizing: border-box;
     display: inline-block;
 }
@@ -53,35 +53,32 @@ footer {
 
 #imgNewGame {
     background-size: cover;
-    /* Adatta l'immagine per coprire tutto il bottone */
+    /* Resize the image to cover the entire button */
     background-position: center;
-    /* Centra l'immagine all'interno del bottone */
+    /* Center the image within the button */
     background-repeat: no-repeat;
-    /* Evita la ripetizione dell'immagine */
+    /* Prevent the image from repeating */
     max-width: 80%;
-    /* Occupa tutta la larghezza disponibile del contenitore */
+    /* Occupy up to 80% of the container's available width */
     cursor: pointer;
-    /* Cambia il cursore quando si passa sopra il bottone */
+    /* Change the cursor when hovering over the button */
 }
 
 .sideImg {
     background-size: cover;
-    /* Adatta l'immagine per coprire tutto il bottone */
+    /* Resize the image to cover the entire button */
     background-position: center;
-    /* Centra l'immagine all'interno del bottone */
+    /* Center the image within the button */
     background-repeat: no-repeat;
-    /* Evita la ripetizione dell'immagine */
+    /* Prevent the image from repeating */
     max-width: 50%;
-    /* Occupa tutta la larghezza disponibile del contenitore */
+    /* Occupy up to 50% of the container's available width */
     cursor: pointer;
-    /* Cambia il cursore quando si passa sopra il bottone */
+    /* Change the cursor when hovering over the button */
 }
 
 .tab {
     height: 100%;
-    /*
-    background-color: rgb(0, 0, 0);
-    */
     box-shadow: 0px 4px 8px black;
 }
 
@@ -91,92 +88,42 @@ footer {
     height: 32.33%;
 }
 
-.borderBottom {
-    height: 1.5%;
-    background-color: black;
-}
-
-#row1 .col-4 {
-    position: relative;
-    padding-right: 2.5%;
-    /* Padding per simulare lo spazio del bordo */
-    box-sizing: border-box;
-    /* Include il padding nel calcolo della larghezza */
-}
-
-/* Simulazione del bordo con un pseudo-elemento */
-#row1 .col-4::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 3.5%;
-    /* Simula il bordo come spazio */
-    height: 100%;
-    background-color: black;
-    /* Colore del bordo simulato */
-}
-
-/* Rimuove il bordo dall'ultima colonna */
-#row1 .col-4:last-child::after {
-    display: none;
-}
-
-#row2 .col-4 {
-    position: relative;
-    padding-right: 3.5%;
-    /* Padding per simulare lo spazio del bordo */
-    box-sizing: border-box;
-    /* Include il padding nel calcolo della larghezza */
-}
-
-/* Simulazione del bordo con un pseudo-elemento */
-#row2 .col-4::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 3.5%;
-    /* Simula il bordo come spazio */
-    height: 100%;
-    background-color: black;
-    /* Colore del bordo simulato */
-}
-
-/* Rimuove il bordo dall'ultima colonna */
-#row2 .col-4:last-child::after {
-    display: none;
-}
-
+#row1 .col-4,
+#row2 .col-4,
 #row3 .col-4 {
     position: relative;
     padding-right: 3.5%;
-    /* Padding per simulare lo spazio del bordo */
     box-sizing: border-box;
-    /* Include il padding nel calcolo della larghezza */
 }
 
-/* Simulazione del bordo con un pseudo-elemento */
+/* Simulate the border with a pseudo-element */
+#row1 .col-4::after,
+#row2 .col-4::after,
 #row3 .col-4::after {
     content: "";
     position: absolute;
     top: 0;
     right: 0;
     width: 3.5%;
-    /* Simula il bordo come spazio */
     height: 100%;
     background-color: black;
-    /* Colore del bordo simulato */
 }
 
-/* Rimuove il bordo dall'ultima colonna */
+/* Remove the border from the last column */
+#row1 .col-4:last-child::after,
+#row2 .col-4:last-child::after,
 #row3 .col-4:last-child::after {
     display: none;
 }
 
+.borderBottom {
+    height: 1.5%;
+    background-color: black;
+}
+
 .tap {
     position: relative;
-    /* Necessario per posizionare il pseudo-elemento */
+    /* Required for positioning the pseudo-element */
     height: 100%;
     width: 100%;
     border: none;
@@ -184,38 +131,38 @@ footer {
     background-color: transparent;
     transition: background-color 0.3s, color 0.3s;
     overflow: hidden;
-    /* Assicura che la X non esca dai confini del div */
+    /* Ensures the X does not overflow the div boundaries */
 }
 
-/* Aggiunge una X al passaggio del mouse */
+/* Adds an X on hover */
 .tap::before {
     content: "";
-    /* Rimuove il contenuto testuale */
+    /* Removes textual content */
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    /* Centra l'immagine */
+    /* Centers the image */
     width: 50px;
-    /* Larghezza dell'immagine */
+    /* Width of the image */
     height: 50px;
-    /* Altezza dell'immagine */
-    background-image: url('../media/x.png');
-    /* Percorso dell'immagine */
+    /* Height of the image */
+    background-image: url('../media/X.png');
+    /* Path to the image */
     background-size: contain;
-    /* Assicura che l'immagine si adatti all'area */
+    /* Ensures the image fits the area */
     background-repeat: no-repeat;
-    /* Evita la ripetizione dell'immagine */
+    /* Prevents image repetition */
     opacity: 0;
-    /* L'immagine è invisibile per default */
+    /* Image is invisible by default */
     transition: opacity 0.3s;
-    /* Transizione per l'apparizione dell'immagine */
+    /* Transition for the appearance of the image */
 }
 
-/* Mostra la X al passaggio del mouse */
+/* Shows the X on hover */
 .tap:hover::before {
     opacity: 1;
-    /* Rende visibile la X al passaggio del mouse */
+    /* Makes the X visible on hover */
 }
 
 .added-x {
@@ -223,15 +170,15 @@ footer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    /* Centra l'immagine */
+    /* Centers the image */
     width: 50px;
-    /* Dimensione dell'immagine */
+    /* Image size */
     height: 50px;
-    /* Dimensione dell'immagine */
+    /* Image size */
     opacity: 0;
-    /* L'immagine è invisibile per default */
+    /* Image is invisible by default */
     transition: opacity 0.3s;
-    /* Transizione per l'apparizione dell'immagine */
+    /* Transition for the appearance of the image */
 }
 
 .tapped {
@@ -242,7 +189,7 @@ footer {
     font-weight: bold;
 }
 
-/* Animazione di fade obliquo */
+/* Diagonal fade-out animation */
 @keyframes fadeOutOblique {
     from {
         opacity: 1;
@@ -252,22 +199,22 @@ footer {
     to {
         opacity: 0;
         transform: translateX(-100px) translateY(-100px);
-        /* Puoi regolare i valori per l'effetto desiderato */
+        /* Adjust values for the desired effect */
     }
 }
 
-/* Classe per applicare l'animazione */
+/* Class to apply the animation */
 .fade-out {
     animation: fadeOutOblique 0.5s forwards;
-    /* Durata dell'animazione e mantenimento dello stato finale */
+    /* Animation duration and keep final state */
 }
 
-/* Opzionale: Per garantire che gli elementi non possano essere cliccati durante l'animazione */
+/* Optional: Ensure elements cannot be clicked during animation */
 .fade-out * {
     pointer-events: none;
 }
 
-/* Stile per il messaggio di status Win/defeat/draw */
+/* Style for the Win/defeat/draw status message */
 .status-message {
     position: fixed;
     top: 0;
@@ -278,26 +225,25 @@ footer {
     justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.5);
-    /* Sfondo semi-trasparente */
+    /* Semi-transparent background */
     z-index: 1;
-    /* Assicurati che sia sopra tutto il resto */
+    /* Ensure it is above everything else */
 }
 
-/* Immagine di status Win/defeat/draw */
+/* Status message image (Win/defeat/draw) */
 .status-message img {
     max-width: 100%;
     max-height: 100%;
     cursor: pointer;
-    /* Cambia il cursore per indicare che è cliccabile */
+    /* Changes cursor to indicate it is clickable */
 }
 
-/* Classe per nascondere il messaggio di status Win/defeat/draw */
+/* Class to hide the Win/defeat/draw status message */
 .hidden {
     display: none;
 }
 
-/*/*/
-
+/* Login div */
 #divLogin {
     display: none;
     background-color: rgb(211, 211, 211);
@@ -308,6 +254,7 @@ footer {
     border-radius: 5%;
 }
 
+/* Register div */
 #divRegister {
     display: none;
     background-color: rgb(211, 211, 211);
@@ -316,9 +263,8 @@ footer {
     height: 55%;
     width: 20%;
     border-radius: 5%;
-
 }
 
-.pError{
-	color: red;	
+.pError {
+    color: red;
 }
